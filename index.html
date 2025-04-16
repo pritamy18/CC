@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bridge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* General Reset */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #333;
+            background-color: #fff0f0; /* Light red background */
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #b91c1c; /* Dark red */
+            color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 26px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            margin-left: 30px; /* Reduced margin for better spacing */
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #facc15;
+        }
+
+        /* News Bar */
+        .news-bar {
+            background-color: #facc15; /* Amber color */
+            color: #000;
+            height: 40px;
+            overflow: hidden;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-content {
+            white-space: nowrap;
+            overflow-x: auto;
+            font-size: 16px;
+        }
+
+        .news-content p {
+            display: inline-block;
+            margin-right: 30px;
+            font-weight: bold;
+        }
+
+        /* Background Canvas for Three.js */
+        #threeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .row-equal {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px; /* Adjust for padding */
+        }
+
+        .col-equal {
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Sidebar Styles */
+        .sidebar-left, .sidebar-right {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
+
+        /* Slider Styles */
+        .slider {
+            flex: 0 0 50%;
+            max-width: 50%;
+            height: 582px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Notification Box */
+        .notification-box {
+            height: 80vh;
+            background-color: #fefefe;
+            border: 1px solid #b91c1c;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .notification-header {
+            background-color: #b91c1c; /* Dark red */
+            color: #ffffff;
+            padding: 12px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .notification-header::before {
+            content: '\1F514'; /* Bell emoji */
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .notification-content {
+            padding: 20px;
+            border-top: 3px solid #b91c1c;
+            background-color: #fff;
+            height: calc(85vh - 40px); /* Adjust for header */
+            overflow-y: auto;
+        }
+
+        .notice {
+            color: #d32424;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.6;
+            border-bottom: 1px solid #afafaf;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .notice:last-child {
+            border-bottom: none;
+        }
+
+        .notice span.new {
+            background-color: #e7e7e7;
+            color: #d61111;
+            padding: 2px 6px;
+            margin-left: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #b91c1c; /* Dark red */
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer a {
+            color: #facc15;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        .social-media {
+            margin: 15px 0;
+        }
+
+        .social-media a {
+            color: #fff;
+            margin: 0 10px;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .social-media a:hover {
+            color: #facc15;
+        }
+
+        /* Slider Navigation Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            background-color: #b91c1c; /* Dark red */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .buttons button:hover {
+            background-color: #facc15;
+            color: #333;
+        }
+
+        /* Login Form */
+        #loginForm {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #loginForm .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #loginForm .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #b91c1c;
+        }
+
+        /* Organization Section */
+        .organization-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+        }
+
+        .organization-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0px 0px 3px gray;
+        }
+
+        .organization-section h2 {
+            margin: 20px 0;
+            color: #b91c1c;
+        }
+       
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            color: #333;
+        }
+        /* form css*/
+        .login-section {
+            display: none;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .active-section {
+            display: block;
+        }
+        h3 {
+            text-align: center;
+            color: #721c24;
+        }
+        .btn-primary, .btn-danger {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .form-group {
+            position: relative;
+        }
+        .toggle-password-switch {
+            position: absolute;
+            right: 10px;
+            top: 38px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .btn-outline-primary {
+            margin: 0 10px;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .sidebar-left, .sidebar-right, .slider {
+                flex: 0 0 100%;
+                max-width: 100%;
+                height: auto;
+            }
+
+            .slider {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-menu li {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .organization-section {
+                margin: 20px 0;
+            }
+        }
+ /* newly blood donated*/
+
+    .section-title {
+      color: #dc3545;
+    }
+    .celebrity-card, .user-card {
+      transition: transform 0.3s ease;
+    }
+    .celebrity-card:hover, .user-card:hover {
+      transform: scale(1.05);
+    }
+    .card-body {
+      background-color: #fff5f5;
+      color: #dc3545;
+    }
+    .user-item img {
+      border-radius: 50%;
+      height: 50px;
+      width: 50px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    .user-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #f8f9fa;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+    .user-item h5 {
+      margin-bottom: 0;
+    }
+    h2{
+        color: #dc3545;
+    }
+    .margin-line {
+      border-bottom: 2px solid #dc3545;
+      margin-bottom: 20px;
+    }
+    .sub-margin-line {
+      border-bottom: 1px solid #dc3545;
+      margin-top: 15px;
+      margin-bottom: 30px;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="nav-logo" href="#">Blood Bridge</a>
+        <ul class="nav-menu navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">About Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="openLoginForm()">login</a></li>
+        </ul>
+    </nav>
+    
+    <!-- News Bar -->
+    <div class="news-bar">
+        <div class="news-content">
+            <marquee behavior="scroll" direction="left">
+                <p>Blood donation drive this weekend! Visit our centers for more info.</p>
+                <p>New hospital partnership announced. More locations for blood donation.</p>
+                <p>We are now accepting online appointments for blood donation.</p>
+            </marquee>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="row row-equal">
+            <!-- Left Sidebar: Hospitals -->
+            <div class="col-equal sidebar-left notification-box">
+                <div class="notification-header">
+                   Affiliated Hospitals
+                </div>
+                <div class="notification-content">
+                    <marquee behavior="scroll" direction="up" scrollamount="2">
+                        <div class="notice">S L Raheja Hospital<span class="new">New</span></div>
+                        <div class="notice">Medicover Hospital <span class="new">New</span></div>
+                        <div class="notice">Madhusudan Multispeciality Hospital<span class="new">New</span></div>
+                        <div class="notice">Medicover Hospitals<span class="new">New</span></div>
+                        <div class="notice">Cumballa Hill Hospital & Heart Institute <span class="new">New</span></div>
+                        <div class="notice">Dr. L H Hiranandani Hospital<span class="new">New</span></div>
+                        <div class="notice">IPC Heart Care Centre<span class="new">New</span></div>
+                        <div class="notice">Asian Heart Institute<span class="new">New</span></div>
+                        <div class="notice">P. D. Hinduja National Hospital<span class="new">New</span></div>
+                    </marquee>
+                </div>
+            </div>
+            
+            <!-- Center: Image Slider -->
+            <div class="col-equal slider">
+                <img src="image/1.jpg" alt="Slide 1" class="slide">
+                <img src="image/2.jpg" alt="Slide 2" class="slide">
+                <img src="image/3.jpg" alt="Slide 3" class="slide">
+                
+            </div>
+            
+            <!-- Right Sidebar: Notifications -->
+            <div class="col-equal sidebar-right notification-box">
+                <div class="notification-header">
+                    Notifications
+                </div>
+                <div class="notification-content">
+                    <marquee behavior="scroll" direction="up" scrollamount="2">
+                        <div class="notice">Blood donation drive this weekend! Visit our centers for more info. <span class="new">New</span></div>
+                        <div class="notice">New hospital partnership announced. More locations for blood donation. <span class="new">New</span></div>
+                        <div class="notice">We are now accepting online appointments for blood donation. <span class="new">New</span></div>
+                        <div class="notice">Innovative Blood Testing Technology Introduced.<span class="new">New</span></div>
+                        <div class="notice">New Guidelines for Blood Donation.<span class="new">New</span></div>
+                        <div class="notice">Community Outreach Program Expands. <span class="new">New</span></div>
+                        <div class="notice">National Blood Donor Month. <span class="new">New</span></div>
+    
+                
+                    </marquee>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slider Navigation Buttons -->
+        <div class="buttons">
+            <button onclick="goPrev()">PREV</button>
+            <button onclick="goNext()">NEXT</button>
+        </div>
+ <!-- Margin Line (Start of Newly Donated Blood Section) -->
+ <div class="container mt-5">
+    <div class="margin-line"></div>
+    <h1 class="text-center section-title">Newly Donated Blood</h1>
+    <p class="text-center text-muted">Celebrities and recently donated users</p>
+  </div>
+
+  <!-- Celebrities Section -->
+  <div class="container">
+    <h2 class="mt-4">Top Donars</h2>
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card celebrity-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Sachin-Tendulkar_%28cropped%29.jpg/220px-Sachin-Tendulkar_%28cropped%29.jpg" class="card-img-top" height="400" alt="Celebrity 1">
+          <div class="card-body">
+            <h5 class="card-title">Sachin Tendulkar</h5>
+            <p class="card-text">Donated A+ blood on Sept 8, 2020.</p>
+            <p class="card-text"><strong>Location:</strong>Mumbai</p>
+          </div>
+        </div>
+        <div class="sub-margin-line"></div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card celebrity-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Maj._Mohit_Sharma_%281_Para_SF%29_%28cropped%29.jpg" class="card-img-top" height="400" alt="Celebrity 2">
+          <div class="card-body">
+            <h5 class="card-title">Mohit Sharma</h5>
+            <p class="card-text">Donated B- blood on Sept 5, 2024.</p>
+            <p class="card-text"><strong>Location:</strong>Mumbai</p>
+          </div>
+        </div>
+        <div class="sub-margin-line"></div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card celebrity-card">
+          <img src="https://feeds.abplive.com/onecms/images/uploaded-images/2023/07/30/f3ccdd27d2000e3f9255a7e3e2c4880035ea5.jpg?impolicy=abp_cdn&imwidth=720" class="card-img-top" height="400" alt="Celebrity 3">
+          <div class="card-body">
+            <h5 class="card-title">Sonu Sood</h5>
+            <p class="card-text">Donated O+ blood on Sept 2, 2024.</p>
+            <p class="card-text"><strong>Location:</strong>Hyderabad</p>
+          </div>
+        </div>
+        <div class="sub-margin-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Users Section -->
+  <div class="container">
+    <h2 class="mt-5">Recently Donated Users</h2>
+    <div class="row user-donations">
+      <div class="col-md-6 mb-4">
+        <div class="card user-card">
+          <div class="card-body">
+            <div class="user-item">
+              <img src="image/p.jpg" alt="user_image">
+              <div>
+                <h5>Vishal Yadav</h5>
+                <p>Donated O+ blood on Sept 9, 2024</p>
+                <p><strong>Location:</strong>Gorakhpur</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card user-card">
+          <div class="card-body">
+            <div class="user-item">
+                <img src="image/p.jpg" alt="user_image">
+              <div>
+                <h5>Sumit Maurya</h5>
+                <p>Donated A- blood on Sept 7, 2024</p>
+                <p><strong>Location:</strong>Kanpur</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card user-card">
+          <div class="card-body">
+            <div class="user-item">
+                <img src="image/p.jpg" alt="user_image">
+              <div>
+                <h5>Soham</h5>
+                <p>Donated B+ blood on Sept 6, 2024</p>
+                <p><strong>Location:</strong>Mumbai</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card user-card">
+          <div class="card-body">
+            <div class="user-item">
+                <img src="image/p.jpg" alt="user_image">
+              <div>
+                <h5>Pritam</h5>
+                <p>Donated AB+ blood on Sept 5, 2024</p>
+                <p><strong>Location:</strong>Pune</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Margin Line (End of Recently Donated Users Section) -->
+  <div class="container mt-4">
+    <div class="margin-line"></div>
+  </div>
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container text-center">
+        <p>&copy; 2024 Blood Bridge. All rights reserved.</p>
+        <p>
+            <a href="pp.md">Privacy Policy</a> | 
+            <a href="tos.md">Terms of Service</a> | 
+            <a href="faqs.md">FAQs</a> | 
+            <a href="aboutus.md">Contact Us</a>
+        </p>
+        <div class="social-media" id="contact">
+            <a href="https://facebook.com" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p>Our mission is to save lives by providing safe, reliable blood donation services to the community. Thank you for supporting our cause.</p>
+        <p>For more information, please contact us at: <a href="mailto:info@bloodbank.com">info@bloodbridge.com</a> or call us at: +91 234 567 890</p>
+        <p>Visit our locations: <a href="#">Find a Center Near You</a></p>
+    </div>
+</footer>
+
+    
+    <!-- Login Form -->
+    <div id="loginForm">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginForm()">&times;</span>
+          <!--  <div class="container mt-5"> --> 
+                <h2 class="text-center">Login Portal</h2>
+                <div class="btn-group">
+                    <!-- Buttons to toggle login forms -->
+                    <button class="btn btn-outline-primary" onclick="showSection('user')">User</button>
+                    <button class="btn btn-outline-primary" onclick="showSection('doctor')">Doctor</button>
+                    <button class="btn btn-outline-primary" onclick="showSection('hospital')">Hospital</button>
+                    <button class="btn btn-outline-primary" onclick="showSection('admin')">Admin</button>
+                    
+                </div>
+        
+                <!-- User Login Form -->
+                <div id="user-login" class="login-section">
+                    <h3>User Login</h3>
+                    <form action="login.php" method="post">
+                        <input type="hidden" name="formType" value="user">
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="userEmail" name="email" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="userPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="userPassword" name="password" required>
+                            <div class="form-check form-switch toggle-password-switch">
+                                <input class="form-check-input" type="checkbox" id="userTogglePassword" onchange="togglePassword('userPassword', 'userTogglePassword', 'userToggleLabel')">
+                                <label class="form-check-label" for="userTogglePassword" id="userToggleLabel">Show</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Login as User</button>
+                        <div class="mt-3 text-center">
+                            <a href="registration.html" class="btn btn-link">New User? Register here</a>
+                        </div>
+                    </form>
+                </div>
+      
+                <!-- Admin Login Form -->
+                <div id="admin-login" class="login-section">
+                    <h3>Admin Login</h3>
+                    <form action="login.php" method="post">
+                        <input type="hidden" name="formType" value="admin">
+                        <div class="mb-3">
+                            <label for="adminEmail" class="form-label">Admin Id</label>
+                            <input type="text" class="form-control" id="adminEmail" name="email" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="adminPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminPassword" name="password" required>
+                            <div class="form-check form-switch toggle-password-switch">
+                                <input class="form-check-input" type="checkbox" id="adminTogglePassword" onchange="togglePassword('adminPassword', 'adminTogglePassword', 'adminToggleLabel')">
+                                <label class="form-check-label" for="adminTogglePassword" id="adminToggleLabel">Show</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Login as Admin</button>
+                    </form>
+                </div>
+                <!-- Hospital Login Form -->
+                <div id="hospital-login" class="login-section">
+                    <h3>Hospital Login</h3>
+                    <form action="login.php" method="post">
+                        <input type="hidden" name="formType" value="hospital">
+                        <div class="mb-3">
+                            <label for="hospitalID" class="form-label">Hospital ID</label>
+                            <input type="text" class="form-control" id="hospitalID" name="id" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="hospitalPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="hospitalPassword" name="password" required>
+                            <div class="form-check form-switch toggle-password-switch">
+                                <input class="form-check-input" type="checkbox" id="hospitalTogglePassword" onchange="togglePassword('hospitalPassword', 'hospitalTogglePassword', 'hospitalToggleLabel')">
+                                <label class="form-check-label" for="hospitalTogglePassword" id="hospitalToggleLabel">Show</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Login as Hospital</button>
+                        <div class="mt-3 text-center">
+                            <a href="registration.html" class="btn btn-link">New User? Register here</a>
+                        </div>
+                    </form>
+                </div>
+        
+                <!-- Doctor Login Form -->
+                <div id="doctor-login" class="login-section">
+                    <h3>Doctor Login</h3>
+                    <form action="login.php" method="post">
+                        <input type="hidden" name="formType" value="doctor">
+                        <div class="mb-3">
+                            <label for="doctorID" class="form-label">Doctor ID</label>
+                            <input type="text" class="form-control" id="doctorID" name="id" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="doctorPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="doctorPassword" name="password" required>
+                            <div class="form-check form-switch toggle-password-switch">
+                                <input class="form-check-input" type="checkbox" id="doctorTogglePassword" onchange="togglePassword('doctorPassword', 'doctorTogglePassword', 'doctorToggleLabel')">
+                                <label class="form-check-label" for="doctorTogglePassword" id="doctorToggleLabel">Show</label>
+                            </div>
+
+                        </div>
+                        <button type="submit" class="btn btn-danger">Login as Doctor</button>
+                        <div class="mt-3 text-center">
+                            <a href="registration.html" class="btn btn-link">New User? Register here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.transform = `translateX(${(i - index) * 100}%)`;
+            });
+        }
+
+        function goNext() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function goPrev() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+       // Initialize slider
+       showSlide(currentSlide);
+       setTimeout(goNext,3000);
+
+       // opening login form
+        function openLoginForm() {
+            document.getElementById('loginForm').style.display = 'flex';
+        }
+
+        function closeLoginForm() {
+            document.getElementById('loginForm').style.display = 'none';
+        }
+        // toggle login form
+        function showSection(section) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.login-section');
+            sections.forEach(section => section.classList.remove('active-section'));
+            
+            // Show the selected section
+            document.getElementById(`${section}-login`).classList.add('active-section');
+        }
+
+        function togglePassword(inputId, toggleId, labelId) {
+            const input = document.getElementById(inputId);
+            const toggleSwitch = document.getElementById(toggleId);
+            const toggleLabel = document.getElementById(labelId);
+
+            if (toggleSwitch.checked) {
+                input.type = "text";
+                toggleLabel.textContent = "Hide";
+            } else {
+                input.type = "password";
+                toggleLabel.textContent = "Show";
+            }
+        }
+        // Automatically open login form after 30 seconds
+       
+        setTimeout(openLoginForm, 30000);
+
+    </script>
+</body>
+</html>

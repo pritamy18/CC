@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Forms</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card-container {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .btn-custom {
+            background-color: #dc3545; /* Red background */
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+        .btn-refresh {
+            background-color: #007bff; /* Blue background */
+            color: white;
+        }
+        .btn-refresh:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        .form-group input {
+            border-radius: 5px;
+        }
+        .password-field {
+            position: relative;
+        }
+        .password-field i {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card-container">
+            <h2 class="text-center">Registration Form</h2>
+            <div class="text-center mb-4">
+                <button class="btn btn-custom" onclick="showForm('userForm')">User</button>
+                <button class="btn btn-custom" onclick="showForm('doctorForm')">Doctor</button>
+                <button class="btn btn-custom" onclick="showForm('hospitalForm')">Hospital</button>
+            </div>
+            
+            <!-- User Registration Form -->
+            <div class="form-container" id="userForm">
+                <h4>User Registration</h4>
+                <form id="userRegistrationForm" action="save_registration.php" method="POST">
+                    <input type="hidden" name="formType" value="user">
+                    <div class="form-group">
+                        <label for="userFullName">Full Name:</label>
+                        <input type="text" class="form-control" id="userFullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email:</label>
+                        <input type="email" class="form-control" id="userEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPhone">Phone:</label>
+                        <input type="tel" class="form-control" id="userPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userDob">Date of Birth:</label>
+                        <input type="date" class="form-control" id="userDob" name="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userLocation">Location:</label>
+                        <input type="text" class="form-control" id="userLocation" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userBloodType">Blood Type:</label>
+                        <select class="form-control" id="userBloodType" name="bloodType" required>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div class="form-group password-field">
+                        <label for="userPassword">Password:</label>
+                        <input type="password" class="form-control" id="userPassword" name="password" required>
+                        <i class="fas fa-eye" onclick="togglePasswordVisibility('userPassword', this)"></i>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Submit</button>
+                    <button type="button" class="btn btn-refresh btn-block" onclick="refreshForm('userForm')">Refresh</button>
+                </form>
+            </div>
+
+            <!-- Doctor Registration Form -->
+            <div class="form-container d-none" id="doctorForm">
+                <h4>Doctor Registration</h4>
+                <form id="doctorRegistrationForm" action="save_registration.php" method="POST">
+                    <input type="hidden" name="formType" value="doctor">
+                    <div class="form-group">
+                        <label for="doctorFullName">Full Name:</label>
+                        <input type="text" class="form-control" id="doctorFullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorEmail">Email:</label>
+                        <input type="email" class="form-control" id="doctorEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorPhone">Phone:</label>
+                        <input type="tel" class="form-control" id="doctorPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorSpecialization">Specialization:</label>
+                        <select class="form-control" id="doctorSpecialization" name="specialization" required>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Intern">Intern</option>
+                            <!-- Add other specializations here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorHospital">Hospital:</label>
+                        <input type="text" class="form-control" id="doctorHospital" name="hospital" required>
+                    </div>
+                    <div class="form-group password-field">
+                        <label for="doctorPassword">Password:</label>
+                        <input type="password" class="form-control" id="doctorPassword" name="password" required>
+                        <i class="fas fa-eye" onclick="togglePasswordVisibility('doctorPassword', this)"></i>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Submit</button>
+                    <button type="button" class="btn btn-refresh btn-block" onclick="refreshForm('doctorForm')">Refresh</button>
+                </form>
+            </div>
+
+            <!-- Hospital Registration Form -->
+            <div class="form-container d-none" id="hospitalForm">
+                <h4>Hospital Registration</h4>
+                <form id="hospitalRegistrationForm" action="save_registration.php" method="POST">
+                    <input type="hidden" name="formType" value="hospital">
+                    <div class="form-group">
+                        <label for="hospitalName">Hospital Name:</label>
+                        <input type="text" class="form-control" id="hospitalName" name="hospitalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalEmail">Email:</label>
+                        <input type="email" class="form-control" id="hospitalEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalPhone">Phone:</label>
+                        <input type="tel" class="form-control" id="hospitalPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalAddress">Address:</label>
+                        <input type="text" class="form-control" id="hospitalAddress" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalType">Type:</label>
+                        <select class="form-control" id="hospitalType" name="type" required>
+                            <option value="General">General</option>
+                            <option value="Specialized">Specialized</option>
+                            <!-- Add other types here -->
+                        </select>
+                    </div>
+                    <div class="form-group password-field">
+                        <label for="hospitalPassword">Password:</label>
+                        <input type="password" class="form-control" id="hospitalPassword" name="password" required>
+                        <i class="fas fa-eye" onclick="togglePasswordVisibility('hospitalPassword', this)"></i>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Submit</button>
+                    <button type="button" class="btn btn-refresh btn-block" onclick="refreshForm('hospitalForm')">Refresh</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showForm(formId) {
+            // Hide all forms
+            document.querySelectorAll('.form-container').forEach(form => form.classList.add('d-none'));
+            // Show the selected form
+            document.getElementById(formId).classList.remove('d-none');
+        }
+
+        function refreshForm(formId) {
+            // Get the form element
+            var form = document.getElementById(formId).querySelector('form');
+            // Reset the form fields
+            form.reset();
+        }
+
+        function togglePasswordVisibility(passwordFieldId, icon) {
+            var passwordField = document.getElementById(passwordFieldId);
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>
